@@ -1,4 +1,4 @@
-package com.insightfullogic;/*
+package com.insightfullogic.collections.performance;/*
  * Copyright 2014 Real Logic Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,9 +27,9 @@ import static org.hamcrest.number.IsCloseTo.closeTo;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.*;
 
-public class OpenHashMapTest
+public class OpenHashMapV1Test
 {
-    private final OpenHashMap<Integer, String> classToTest = new OpenHashMap<>();
+    private final OpenHashMapV1<Integer, String> classToTest = new OpenHashMapV1<>();
 
     @Test
     public void shouldDoPutAndThenGet()
@@ -59,7 +59,7 @@ public class OpenHashMapTest
     public void shouldGrowWhenThresholdExceeded()
     {
         final double loadFactor = 0.5d;
-        final OpenHashMap<Integer, String> map = new OpenHashMap<>(32, loadFactor);
+        final OpenHashMapV1<Integer, String> map = new OpenHashMapV1<>(32, loadFactor);
         for (int i = 0; i < 16; i++)
         {
             map.put(i, Integer.toString(i));
@@ -83,7 +83,7 @@ public class OpenHashMapTest
     public void shouldHandleCollisionAndThenLinearProbe()
     {
         final double loadFactor = 0.5d;
-        final OpenHashMap<Integer, String> map = new OpenHashMap<>(32, loadFactor);
+        final OpenHashMapV1<Integer, String> map = new OpenHashMapV1<>(32, loadFactor);
         final int key = 7;
         final String value = "Seven";
         map.put(key, value);

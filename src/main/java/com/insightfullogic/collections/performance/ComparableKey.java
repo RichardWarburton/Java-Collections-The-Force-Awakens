@@ -1,4 +1,4 @@
-package com.insightfullogic.custom;
+package com.insightfullogic.collections.performance;
 
 public class ComparableKey implements Comparable<ComparableKey>
 {

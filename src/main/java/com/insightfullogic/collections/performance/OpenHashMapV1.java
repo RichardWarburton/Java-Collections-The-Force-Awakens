@@ -1,4 +1,4 @@
-package com.insightfullogic;
+package com.insightfullogic.collections.performance;
 /*
  * Copyright 2014 Real Logic Ltd.
  *
@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  * @param <K> type of the keys stored in the {@link java.util.Map}
  * @param <V> type of values stored in the {@link java.util.Map}
  */
-public class OpenHashMap<K, V>
+public class OpenHashMapV1<K, V>
     implements Map<K, V>
 {
     private final double loadFactor;
@@ -40,7 +40,7 @@ public class OpenHashMap<K, V>
     private final KeySet<K> keySet;
     private final EntrySet<K, V> entrySet;
 
-    public OpenHashMap()
+    public OpenHashMapV1()
     {
         this(8, 0.67);
     }
@@ -51,7 +51,7 @@ public class OpenHashMap<K, V>
      * @param initialCapacity for the backing array
      * @param loadFactor      limit for resizing on puts
      */
-    public OpenHashMap(
+    public OpenHashMapV1(
         final int initialCapacity,
         final double loadFactor)
     {
@@ -434,12 +434,12 @@ public class OpenHashMap<K, V>
     {
         public int size()
         {
-            return OpenHashMap.this.size();
+            return OpenHashMapV1.this.size();
         }
 
         public boolean contains(final Object o)
         {
-            return OpenHashMap.this.containsKey(o);
+            return OpenHashMapV1.this.containsKey(o);
         }
 
         @Override
@@ -450,12 +450,12 @@ public class OpenHashMap<K, V>
 
         public boolean remove(final Object o)
         {
-            return null != OpenHashMap.this.remove(o);
+            return null != OpenHashMapV1.this.remove(o);
         }
 
         public void clear()
         {
-            OpenHashMap.this.clear();
+            OpenHashMapV1.this.clear();
         }
     }
 
@@ -463,12 +463,12 @@ public class OpenHashMap<K, V>
     {
         public int size()
         {
-            return OpenHashMap.this.size();
+            return OpenHashMapV1.this.size();
         }
 
         public boolean contains(final Object o)
         {
-            return OpenHashMap.this.containsValue(o);
+            return OpenHashMapV1.this.containsValue(o);
         }
 
         @Override
@@ -479,7 +479,7 @@ public class OpenHashMap<K, V>
 
         public void clear()
         {
-            OpenHashMap.this.clear();
+            OpenHashMapV1.this.clear();
         }
     }
 
@@ -488,7 +488,7 @@ public class OpenHashMap<K, V>
         @Override
         public int size()
         {
-            return OpenHashMap.this.size();
+            return OpenHashMapV1.this.size();
         }
 
         @Override
@@ -500,7 +500,7 @@ public class OpenHashMap<K, V>
         @Override
         public void clear()
         {
-            OpenHashMap.this.clear();
+            OpenHashMapV1.this.clear();
         }
     }
 
@@ -584,8 +584,8 @@ public class OpenHashMap<K, V>
 
         void reset()
         {
-            keys = OpenHashMap.this.keys;
-            values = OpenHashMap.this.values;
+            keys = OpenHashMapV1.this.keys;
+            values = OpenHashMapV1.this.values;
             final int capacity = values.length;
 
             int i = capacity;

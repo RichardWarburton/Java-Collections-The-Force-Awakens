@@ -1,17 +1,13 @@
-package com.insightfullogic.custom;
-
-import java.util.stream.IntStream;
-
-import static com.insightfullogic.custom.ComparableKey.SIZE;
+package com.insightfullogic.collections.performance;
 
 public class InComparableKey
 {
 
-    public static final InComparableKey[] keys = new InComparableKey[SIZE];
+    public static final InComparableKey[] keys = new InComparableKey[ComparableKey.SIZE];
 
     static
     {
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < ComparableKey.SIZE; i++)
         {
             keys[i] = new InComparableKey(i);
         }

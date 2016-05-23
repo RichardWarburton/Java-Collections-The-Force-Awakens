@@ -29,9 +29,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.insightfullogic.custom;
+package com.insightfullogic.collections.performance;
 
-import com.insightfullogic.OpenHashMap;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
@@ -48,7 +47,7 @@ public class HashMapBenchmark
     @Param({"10", "100", "10000", "1000000"})
     int size;
 
-    Map<Integer, String> ourMap = new OpenHashMap<>();
+    Map<Integer, String> ourMap = new OpenHashMapV1<>();
     Map<Integer, String> defaultMap = new HashMap<>();
     List<Integer> indexes;
     List<String> values;
