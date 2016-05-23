@@ -32,89 +32,128 @@
 package com.insightfullogic.collections.performance;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.infra.Blackhole;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Fork(1)
-@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
 @State(Scope.Benchmark)
+@BenchmarkMode(Mode.Throughput)
 public class HashMapBenchmark
 {
 
-    @Param({"10", "100", "10000", "1000000"})
+    @Param({"10", "100", "10000", "100000", "1000000"})
     int size;
 
-    Map<Integer, String> ourMap = new OpenHashMapV1<>();
-    Map<Integer, String> defaultMap = new HashMap<>();
-    List<Integer> indexes;
-    List<String> values;
+    @Param({"0.0", "0.5", "0.9"})
+    double collisionProb;
+
+    @Param({"0.5", "0.75", "0.9"})
+    float loadFactor;
+
+    Map<ComparableKey, String> customEmptyMap;
+    Map<ComparableKey, String> customFullMap;
+    Map<ComparableKey, String> defaultEmptyMap;
+
+    int position = -1;
+
+    // Used to simulate misses (gets that return null) with keys that aren't part of the map
+    List<ComparableKey> nonKeys = new ArrayList<>(size);
+    List<ComparableKey> keys = new ArrayList<>(size);
+    List<String> values = new ArrayList<>(size);
 
     @Setup
     public void setup()
     {
+        customEmptyMap = new OpenHashMapV1<>(8, loadFactor);
+        customFullMap = new OpenHashMapV1<>(8, loadFactor);
+        defaultEmptyMap = new HashMap<>(8, loadFactor);
+
+        final Random random = new Random();
+        final int size = this.size;
+        int last = 0;
         for (int i = 0; i < size; i++)
         {
-            ourMap.put(i, String.valueOf(i));
-            defaultMap.put(i, String.valueOf(i));
+            final int number;
+            if (random.nextDouble() < collisionProb)
+            {
+                number = last;
+            }
+            else
+            {
+                last = number = i;
+            }
+
+            final ComparableKey key = new ComparableKey(number);
+            final String value = String.valueOf(number);
+
+            keys.add(key);
+            values.add(value);
+            customFullMap.put(key, value);
         }
 
-        indexes = new ArrayList<>();
-        values = new ArrayList<>();
+        Collections.shuffle(keys);
 
-        Random random = new Random(100);
-        for (int i = 1; i <= 100; i++)
-        {
-            int index = random.nextInt(size);
-            indexes.add(index);
-            values.add(String.valueOf(index));
-        }
+        System.gc();
+    }
+
+    // Baseline to be able to remove overhead of nextKey() operation
+    @Benchmark
+    public ComparableKey baseline()
+    {
+        return nextKey();
     }
 
     @Benchmark
-    public void ourGet(final Blackhole blackhole)
+    public String customPut()
     {
-        final Map<Integer, String> ourMap = this.ourMap;
-        for (int index : indexes)
-        {
-            blackhole.consume(ourMap.get(index));
-        }
+        final ComparableKey key = nextKey();
+        final String value = values.get(position);
+        return customEmptyMap.put(key, value);
     }
 
     @Benchmark
-    public void defaultGet(final Blackhole blackhole)
+    public String customHitGet()
     {
-        final Map<Integer, String> defaultMap = this.defaultMap;
-        for (int index : indexes)
-        {
-            blackhole.consume(defaultMap.get(index));
-        }
+        final ComparableKey key = nextKey();
+        return customFullMap.get(key);
     }
 
     @Benchmark
-    public void ourPut(final Blackhole blackhole)
+    public String customMissGet()
     {
-        final Map<Integer, String> ourMap = this.ourMap;
-        final List<Integer> indexes = this.indexes;
-        final List<String> values = this.values;
-        for (int i = 0, n = indexes.size(); i < n; i++)
-        {
-            blackhole.consume(ourMap.put(indexes.get(i), values.get(i)));
-        }
+        nextPosition();
+        final ComparableKey key = nonKeys.get(position);
+        return customFullMap.get(key);
     }
 
-    @Benchmark
-    public void defaultPut(final Blackhole blackhole)
+    private ComparableKey nextKey()
     {
-        final Map<Integer, String> ourMap = this.ourMap;
-        final List<Integer> indexes = this.indexes;
-        final List<String> values = this.values;
-        for (int i = 0, n = indexes.size(); i < n; i++)
-        {
-            blackhole.consume(defaultMap.put(indexes.get(i), values.get(i)));
-        }
+        nextPosition();
+        return keys.get(position);
     }
+
+    private void nextPosition()
+    {
+        position = (position + 1) % size;
+    }
+
+    // TODO:
+        // Miss vs hit
+        // capacity vs population
+        // Koloboke
+
+    // Future TODO:
+        // megamorphic equals?
+        // Expensive vs Cheap hashCode and Equals methods
+
+    // Done:
+        // hash collisions
+        // Different keys
+        // Different Load Factors
+        // Different Size
+        // shuffle keys
 
 }

@@ -1,4 +1,6 @@
-size hashmap
+Done:
+    size hashmap
+
 hashcode of keys - objects in it good vs bad
 usage patterns - put/get/remove/iteration
 different types of key

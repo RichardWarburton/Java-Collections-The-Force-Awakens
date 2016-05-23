@@ -2,7 +2,7 @@ package com.insightfullogic.collections.performance;
 
 public class ComparableKey implements Comparable<ComparableKey>
 {
-    public static final int SIZE = 10_000;
+    public static final int SIZE = 1_000_000;
 
     public static final ComparableKey[] keys = new ComparableKey[SIZE];
 
