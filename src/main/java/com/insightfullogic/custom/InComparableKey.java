@@ -7,11 +7,14 @@ import static com.insightfullogic.custom.ComparableKey.SIZE;
 public class InComparableKey
 {
 
-    public static final InComparableKey[] keys;
+    public static final InComparableKey[] keys = new InComparableKey[SIZE];
 
     static
     {
-        keys = IntStream.range(0, SIZE).mapToObj(InComparableKey::new).toArray(InComparableKey[]::new);
+        for (int i = 0; i < SIZE; i++)
+        {
+            keys[i] = new InComparableKey(i);
+        }
     }
 
     private final int value;

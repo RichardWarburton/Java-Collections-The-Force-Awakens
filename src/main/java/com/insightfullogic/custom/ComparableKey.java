@@ -1,16 +1,17 @@
 package com.insightfullogic.custom;
 
-import java.util.stream.IntStream;
-
 public class ComparableKey implements Comparable<ComparableKey>
 {
     public static final int SIZE = 10_000;
 
-    public static final ComparableKey[] keys;
+    public static final ComparableKey[] keys = new ComparableKey[SIZE];
 
     static
     {
-        keys = IntStream.range(0, SIZE).mapToObj(ComparableKey::new).toArray(ComparableKey[]::new);
+        for (int i = 0; i < SIZE; i++)
+        {
+            keys[i] = new ComparableKey(i);
+        }
     }
 
     private final int value;
