@@ -29,8 +29,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.insightfullogic;
+package com.insightfullogic.custom;
 
+import com.insightfullogic.OpenHashMap;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @State(Scope.Benchmark)
-public class MyBenchmark
+public class HashMapBenchmark
 {
 
     @Param({"10", "100", "10000", "1000000"})
