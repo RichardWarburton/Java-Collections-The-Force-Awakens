@@ -1,0 +1,8 @@
+size hashmap
+hashcode of keys - objects in it good vs bad
+usage patterns - put/get/remove/iteration
+different types of key
+expensive or cheap .equals() method
+empty get case is still fast
+insertion order
+
