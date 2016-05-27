@@ -3,16 +3,17 @@ package com.insightfullogic.collections.performance;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static org.openjdk.jmh.annotations.Mode.AverageTime;
 
 @Fork(1)
-@Threads(1)
-@Warmup(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
-@State(Scope.Benchmark)
-@BenchmarkMode(Mode.Throughput)
+@Warmup(iterations = 5)
+@Measurement(iterations = 5)
+@State(Scope.Thread)
+@BenchmarkMode(AverageTime)
+@OutputTimeUnit(NANOSECONDS)
 public class HashMapGetBenchmark
 {
 
@@ -25,7 +26,7 @@ public class HashMapGetBenchmark
     @Param({"JdkMap", "Koloboke" })
     String mapType;
 
-    @Param({/*"Comparable",*/ "InComparable"})
+    @Param({"Comparable", "InComparable"})
     String keyType;
 
     Map<Object, String> map;
@@ -33,10 +34,9 @@ public class HashMapGetBenchmark
     int successIndex = 0;
     int failIndex = 0;
 
-    // Used to simulate misses (gets that return null) with keys that aren't part of the map
-    Object[] failKeys = new Object[size];
-    Object[] successfulKeys = new Object[size];
-    List<String> values = new ArrayList<>(size);
+    Object[] failKeys;
+    Object[] successfulKeys;
+    List<String> values = new ArrayList<>();
 
     @Setup
     public void setup()
@@ -45,6 +45,8 @@ public class HashMapGetBenchmark
         final KeyFactory keyFactory = KeyFactory.valueOf(keyType);
 
         map = mapFactory.make();
+        failKeys = new Object[size];
+        successfulKeys = new Object[size];
 
         final int size = this.size;
         final Random random = new Random(666);
