@@ -47,6 +47,7 @@ public class HashMapBenchmark
 
     @Param({"10", "100", "10000", "100000", "1000000"})
     int size;
+    int loadedSize;
 
     @Param({"0.0", "0.5", "0.9"})
     double collisionProb;
@@ -69,8 +70,10 @@ public class HashMapBenchmark
     // Used to simulate misses (gets that return null) with keys that aren't part of the map
     List<ComparableKey> comparableNonKeys = new ArrayList<>(size);
     List<ComparableKey> comparableKeys = new ArrayList<>(size);
+    List<ComparableKey> comparableLoadedKeys = new ArrayList<>();
     List<InComparableKey> inComparableNonKeys = new ArrayList<>(size);
     List<InComparableKey> inComparableKeys = new ArrayList<>(size);
+    List<InComparableKey> inComparableLoadedKeys = new ArrayList<>();
     List<String> values = new ArrayList<>(size);
 
     @Setup
@@ -86,7 +89,7 @@ public class HashMapBenchmark
 
         final Random random = new Random();
         final int size = this.size;
-        final int loaded = (int) (size * resizeLoadFactor) - 1;
+        loadedSize = (int) (size * resizeLoadFactor) - 1;
         int last = 0;
         for (int i = 0; i < size; i++)
         {
@@ -107,10 +110,12 @@ public class HashMapBenchmark
             comparableKeys.add(comparableKey);
             inComparableKeys.add(inComparableKey);
             values.add(value);
-            if (i < loaded)
+            if (i < loadedSize)
             {
                 comparableLoadedMap.put(comparableKey, value);
                 inComparableLoadedMap.put(inComparableKey, value);
+                comparableLoadedKeys.add(comparableKey);
+                inComparableLoadedKeys.add(inComparableKey);
             }
             comparableFullMap.put(comparableKey, value);
             inComparableFullMap.put(inComparableKey, value);
@@ -136,6 +141,10 @@ public class HashMapBenchmark
 
         Collections.shuffle(comparableKeys);
         Collections.shuffle(inComparableKeys);
+        Collections.shuffle(comparableNonKeys);
+        Collections.shuffle(inComparableNonKeys);
+        Collections.shuffle(comparableLoadedKeys);
+        Collections.shuffle(inComparableLoadedKeys);
 
         System.gc();
     }
@@ -144,53 +153,129 @@ public class HashMapBenchmark
     @Benchmark
     public ComparableKey baseline()
     {
-        return nextKey();
+        return nextComparableKey();
     }
 
     @Benchmark
-    public String customPut()
+    public String putMissingComparable()
     {
-        final ComparableKey key = nextKey();
+        final ComparableKey key = nextComparableKey();
         final String value = values.get(position);
         return comparableEmptyMap.put(key, value);
     }
 
     @Benchmark
-    public String customHitGet()
+    public String putReplaceComparable()
     {
-        final ComparableKey key = nextKey();
+        final ComparableKey key = nextComparableKey();
+        final String value = values.get(position);
+        return comparableFullMap.put(key, value);
+    }
+
+    @Benchmark
+    public String putLoadedComparable()
+    {
+        final ComparableKey key = nextLoadedComparableKey();
+        final String value = values.get(position);
+        return comparableLoadedMap.put(key, value);
+    }
+
+    @Benchmark
+    public String getHitComparable()
+    {
+        final ComparableKey key = nextComparableKey();
         return comparableFullMap.get(key);
     }
 
     @Benchmark
-    public String customMissGet()
+    public String getMissComparable()
     {
-        nextPosition();
+        nextPosition(size);
         final ComparableKey key = comparableNonKeys.get(position);
         return comparableFullMap.get(key);
     }
 
     @Benchmark
-    public String customLoadedGet()
+    public String loadedGetComparable()
     {
-        final ComparableKey key = nextKey();
+        final ComparableKey key = nextLoadedComparableKey();
         return comparableLoadedMap.get(key);
     }
 
-    private ComparableKey nextKey()
+    @Benchmark
+    public String putMissingIncomparable()
     {
-        nextPosition();
+        final InComparableKey key = nextInComparableKey();
+        final String value = values.get(position);
+        return inComparableEmptyMap.put(key, value);
+    }
+
+    @Benchmark
+    public String putReplaceInComparable()
+    {
+        final InComparableKey key = nextInComparableKey();
+        final String value = values.get(position);
+        return inComparableFullMap.put(key, value);
+    }
+
+    @Benchmark
+    public String putLoadedInComparable()
+    {
+        final InComparableKey key = nextLoadedInComparableKey();
+        final String value = values.get(position);
+        return inComparableLoadedMap.put(key, value);
+    }
+
+    @Benchmark
+    public String getHitInComparable()
+    {
+        final InComparableKey key = nextInComparableKey();
+        return inComparableFullMap.get(key);
+    }
+
+    @Benchmark
+    public String getMissInComparable()
+    {
+        nextPosition(size);
+        final InComparableKey key = inComparableNonKeys.get(position);
+        return inComparableFullMap.get(key);
+    }
+
+    @Benchmark
+    public String loadedGetInComparable()
+    {
+        final InComparableKey key = nextLoadedInComparableKey();
+        return comparableLoadedMap.get(key);
+    }
+
+    private ComparableKey nextComparableKey()
+    {
+        nextPosition(size);
         return comparableKeys.get(position);
     }
 
-    private void nextPosition()
+    private ComparableKey nextLoadedComparableKey()
+    {
+        nextPosition(loadedSize);
+        return comparableLoadedKeys.get(position);
+    }
+
+    private InComparableKey nextInComparableKey()
+    {
+        nextPosition(size);
+        return inComparableKeys.get(position);
+    }
+
+    private InComparableKey nextLoadedInComparableKey()
+    {
+        nextPosition(loadedSize);
+        return inComparableLoadedKeys.get(position);
+    }
+
+    private void nextPosition(final int size)
     {
         position = (position + 1) % size;
     }
-
-    // TODO:
-        // Very the capacity vs population ratio more
-        // comparable vs incomparable
 
     // Future TODO:
         // megamorphic equals?
@@ -202,4 +287,6 @@ public class HashMapBenchmark
         // Different Load Factors
         // Different Size
         // shuffle keys
+        // Very the capacity vs population ratio more
+        // Comparable vs incomparable
 }
