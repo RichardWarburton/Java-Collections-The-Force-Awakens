@@ -141,7 +141,6 @@ public class HashMapBenchmark
     }
 
     // TODO:
-        // Miss vs hit
         // capacity vs population
         // Koloboke
 
@@ -155,5 +154,4 @@ public class HashMapBenchmark
         // Different Load Factors
         // Different Size
         // shuffle keys
-
 }
