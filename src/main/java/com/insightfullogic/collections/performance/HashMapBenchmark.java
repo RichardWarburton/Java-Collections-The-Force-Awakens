@@ -60,12 +60,17 @@ public class HashMapBenchmark
     Map<ComparableKey, String> comparableEmptyMap;
     Map<ComparableKey, String> comparableFullMap;
     Map<ComparableKey, String> comparableLoadedMap;
+    Map<InComparableKey, String> inComparableEmptyMap;
+    Map<InComparableKey, String> inComparableFullMap;
+    Map<InComparableKey, String> inComparableLoadedMap;
 
     int position = -1;
 
     // Used to simulate misses (gets that return null) with keys that aren't part of the map
     List<ComparableKey> comparableNonKeys = new ArrayList<>(size);
     List<ComparableKey> comparableKeys = new ArrayList<>(size);
+    List<InComparableKey> inComparableNonKeys = new ArrayList<>(size);
+    List<InComparableKey> inComparableKeys = new ArrayList<>(size);
     List<String> values = new ArrayList<>(size);
 
     @Setup
@@ -75,36 +80,62 @@ public class HashMapBenchmark
         comparableEmptyMap = factory.make(resizeLoadFactor);
         comparableFullMap = factory.make(resizeLoadFactor);
         comparableLoadedMap = factory.make(resizeLoadFactor);
+        inComparableEmptyMap = factory.make(resizeLoadFactor);
+        inComparableFullMap = factory.make(resizeLoadFactor);
+        inComparableLoadedMap = factory.make(resizeLoadFactor);
 
         final Random random = new Random();
         final int size = this.size;
-        final int loaded = (int) (size * resizeLoadFactor) - 2;
+        final int loaded = (int) (size * resizeLoadFactor) - 1;
         int last = 0;
         for (int i = 0; i < size; i++)
         {
-            final int number;
+            final int hash;
             if (random.nextDouble() < collisionProb)
             {
-                number = last;
+                hash = last;
             }
             else
             {
-                last = number = i;
+                last = hash = i;
             }
 
-            final ComparableKey key = new ComparableKey(number);
-            final String value = String.valueOf(number);
+            final ComparableKey comparableKey = new ComparableKey(i, hash);
+            final InComparableKey inComparableKey = new InComparableKey(i, hash);
+            final String value = String.valueOf(i);
 
-            comparableKeys.add(key);
+            comparableKeys.add(comparableKey);
+            inComparableKeys.add(inComparableKey);
             values.add(value);
             if (i < loaded)
             {
-                comparableLoadedMap.put(key, value);
+                comparableLoadedMap.put(comparableKey, value);
+                inComparableLoadedMap.put(inComparableKey, value);
             }
-            comparableFullMap.put(key, value);
+            comparableFullMap.put(comparableKey, value);
+            inComparableFullMap.put(inComparableKey, value);
+        }
+
+        last = size + 1;
+        final int n = 2 * size + 1;
+        for (int i = last; i < n; i++)
+        {
+            final int hash;
+            if (random.nextDouble() < collisionProb)
+            {
+                hash = last;
+            }
+            else
+            {
+                last = hash = i;
+            }
+
+            comparableNonKeys.add(new ComparableKey(i, hash));
+            inComparableNonKeys.add(new InComparableKey(i, hash));
         }
 
         Collections.shuffle(comparableKeys);
+        Collections.shuffle(inComparableKeys);
 
         System.gc();
     }
@@ -158,7 +189,7 @@ public class HashMapBenchmark
     }
 
     // TODO:
-        // capacity vs population
+        // Very the capacity vs population ratio more
         // comparable vs incomparable
 
     // Future TODO:

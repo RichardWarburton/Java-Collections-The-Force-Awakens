@@ -3,21 +3,13 @@ package com.insightfullogic.collections.performance;
 public class InComparableKey
 {
 
-    public static final InComparableKey[] keys = new InComparableKey[ComparableKey.SIZE];
-
-    static
-    {
-        for (int i = 0; i < ComparableKey.SIZE; i++)
-        {
-            keys[i] = new InComparableKey(i);
-        }
-    }
-
     private final int value;
+    private final int hash;
 
-    public InComparableKey(final int value)
+    public InComparableKey(final int value, final int hash)
     {
         this.value = value;
+        this.hash = hash;
     }
 
     public boolean equals(final Object o)
@@ -32,6 +24,6 @@ public class InComparableKey
 
     public int hashCode()
     {
-        return value;
+        return hash;
     }
 }

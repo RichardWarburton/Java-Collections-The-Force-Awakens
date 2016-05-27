@@ -4,21 +4,13 @@ public class ComparableKey implements Comparable<ComparableKey>
 {
     public static final int SIZE = 1_000_000;
 
-    public static final ComparableKey[] keys = new ComparableKey[SIZE];
-
-    static
-    {
-        for (int i = 0; i < SIZE; i++)
-        {
-            keys[i] = new ComparableKey(i);
-        }
-    }
-
     private final int value;
+    private final int hash;
 
-    public ComparableKey(final int value)
+    public ComparableKey(final int value, final int hash)
     {
         this.value = value;
+        this.hash = hash;
     }
 
     public int compareTo(final ComparableKey o)
@@ -38,6 +30,6 @@ public class ComparableKey implements Comparable<ComparableKey>
 
     public int hashCode()
     {
-        return value;
+        return hash;
     }
 }
