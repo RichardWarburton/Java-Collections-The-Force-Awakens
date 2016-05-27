@@ -9,7 +9,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.openjdk.jmh.annotations.Mode.AverageTime;
 
 @Fork(1)
-@Warmup(iterations = 5)
+@Warmup(iterations = 3)
 @Measurement(iterations = 5)
 @State(Scope.Thread)
 @BenchmarkMode(AverageTime)
@@ -48,6 +48,7 @@ public class HashMapGetBenchmark
         failKeys = new Object[size];
         successfulKeys = new Object[size];
 
+        // Generate hashes that may collide, but are evenly distributed throughput the space of hashes
         final int size = this.size;
         final Random random = new Random(666);
         final int numberOfHashes = (int) (size * collisionProb);
@@ -57,6 +58,7 @@ public class HashMapGetBenchmark
             hashes[i] = random.nextInt(size);
         }
 
+        // Setup keys and values
         for (int i = 0; i < size; i++)
         {
             final int hash = hashes[random.nextInt(numberOfHashes)];
@@ -68,12 +70,26 @@ public class HashMapGetBenchmark
             map.put(successfulKeys[i], value);
         }
 
+        // Randomise layout of keys in memory
         System.gc();
-
         Collections.shuffle(asList(successfulKeys));
         Collections.shuffle(asList(failKeys));
-
         System.gc();
+
+        // Add type pollution
+        pollute("a", "a");
+        pollute(Integer.valueOf(1), "a");
+        pollute(Float.valueOf(1.0f), "a");
+    }
+
+    private void pollute(final Object key, final String value)
+    {
+        map.put(key, value);
+        if (!Objects.equals(map.get(key), value))
+        {
+            throw new IllegalStateException();
+        }
+        map.remove(key);
     }
 
     // Baseline to be able to remove overhead of nextKey() operation
