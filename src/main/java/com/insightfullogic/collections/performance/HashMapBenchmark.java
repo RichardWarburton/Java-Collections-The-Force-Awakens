@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Fork(1)
+@Threads(1)
 @Warmup(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
 @State(Scope.Benchmark)
@@ -51,28 +52,33 @@ public class HashMapBenchmark
     double collisionProb;
 
     @Param({"0.5", "0.75", "0.9"})
-    float loadFactor;
+    float resizeLoadFactor;
 
-    Map<ComparableKey, String> customEmptyMap;
-    Map<ComparableKey, String> customFullMap;
-    Map<ComparableKey, String> defaultEmptyMap;
+    @Param({"OpenHashMap", "JdkMap", "Koloboke" })
+    String mapType;
+
+    Map<ComparableKey, String> comparableEmptyMap;
+    Map<ComparableKey, String> comparableFullMap;
+    Map<ComparableKey, String> comparableLoadedMap;
 
     int position = -1;
 
     // Used to simulate misses (gets that return null) with keys that aren't part of the map
-    List<ComparableKey> nonKeys = new ArrayList<>(size);
-    List<ComparableKey> keys = new ArrayList<>(size);
+    List<ComparableKey> comparableNonKeys = new ArrayList<>(size);
+    List<ComparableKey> comparableKeys = new ArrayList<>(size);
     List<String> values = new ArrayList<>(size);
 
     @Setup
     public void setup()
     {
-        customEmptyMap = new OpenHashMapV1<>(8, loadFactor);
-        customFullMap = new OpenHashMapV1<>(8, loadFactor);
-        defaultEmptyMap = new HashMap<>(8, loadFactor);
+        final MapFactory factory = MapFactory.valueOf(mapType);
+        comparableEmptyMap = factory.make(resizeLoadFactor);
+        comparableFullMap = factory.make(resizeLoadFactor);
+        comparableLoadedMap = factory.make(resizeLoadFactor);
 
         final Random random = new Random();
         final int size = this.size;
+        final int loaded = (int) (size * resizeLoadFactor) - 2;
         int last = 0;
         for (int i = 0; i < size; i++)
         {
@@ -89,12 +95,16 @@ public class HashMapBenchmark
             final ComparableKey key = new ComparableKey(number);
             final String value = String.valueOf(number);
 
-            keys.add(key);
+            comparableKeys.add(key);
             values.add(value);
-            customFullMap.put(key, value);
+            if (i < loaded)
+            {
+                comparableLoadedMap.put(key, value);
+            }
+            comparableFullMap.put(key, value);
         }
 
-        Collections.shuffle(keys);
+        Collections.shuffle(comparableKeys);
 
         System.gc();
     }
@@ -111,28 +121,35 @@ public class HashMapBenchmark
     {
         final ComparableKey key = nextKey();
         final String value = values.get(position);
-        return customEmptyMap.put(key, value);
+        return comparableEmptyMap.put(key, value);
     }
 
     @Benchmark
     public String customHitGet()
     {
         final ComparableKey key = nextKey();
-        return customFullMap.get(key);
+        return comparableFullMap.get(key);
     }
 
     @Benchmark
     public String customMissGet()
     {
         nextPosition();
-        final ComparableKey key = nonKeys.get(position);
-        return customFullMap.get(key);
+        final ComparableKey key = comparableNonKeys.get(position);
+        return comparableFullMap.get(key);
+    }
+
+    @Benchmark
+    public String customLoadedGet()
+    {
+        final ComparableKey key = nextKey();
+        return comparableLoadedMap.get(key);
     }
 
     private ComparableKey nextKey()
     {
         nextPosition();
-        return keys.get(position);
+        return comparableKeys.get(position);
     }
 
     private void nextPosition()
@@ -142,7 +159,7 @@ public class HashMapBenchmark
 
     // TODO:
         // capacity vs population
-        // Koloboke
+        // comparable vs incomparable
 
     // Future TODO:
         // megamorphic equals?

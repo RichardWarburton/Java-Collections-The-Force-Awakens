@@ -27,9 +27,9 @@ import static org.hamcrest.number.IsCloseTo.closeTo;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.*;
 
-public class OpenHashMapV1Test
+public class OpenHashMapTest
 {
-    private final OpenHashMapV1<Integer, String> classToTest = new OpenHashMapV1<>();
+    private final OpenHashMap<Integer, String> classToTest = new OpenHashMap<>();
 
     @Test
     public void shouldDoPutAndThenGet()
@@ -59,7 +59,7 @@ public class OpenHashMapV1Test
     public void shouldGrowWhenThresholdExceeded()
     {
         final double loadFactor = 0.5d;
-        final OpenHashMapV1<Integer, String> map = new OpenHashMapV1<>(32, loadFactor);
+        final OpenHashMap<Integer, String> map = new OpenHashMap<>(32, loadFactor);
         for (int i = 0; i < 16; i++)
         {
             map.put(i, Integer.toString(i));
@@ -83,7 +83,7 @@ public class OpenHashMapV1Test
     public void shouldHandleCollisionAndThenLinearProbe()
     {
         final double loadFactor = 0.5d;
-        final OpenHashMapV1<Integer, String> map = new OpenHashMapV1<>(32, loadFactor);
+        final OpenHashMap<Integer, String> map = new OpenHashMap<>(32, loadFactor);
         final int key = 7;
         final String value = "Seven";
         map.put(key, value);
