@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.insightfullogic</groupId>
-    <artifactId>hashmap-benchmarks</artifactId>
+    <groupId>com.iteratrlearning</groupId>
+    <artifactId>Java-collections-force-awakens</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>JMH benchmark sample: Java</name>
+    <name>Code Samples for Java Collections Force Awakens</name>
 
     <prerequisites>
         <maven>3.0</maven>

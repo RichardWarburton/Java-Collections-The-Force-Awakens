@@ -1,4 +1,4 @@
-package com.insightfullogic.collections.performance;
+package com.iteratrlearning.collections.performance;
 
 public enum KeyFactory
 {

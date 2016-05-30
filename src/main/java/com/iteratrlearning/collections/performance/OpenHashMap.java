@@ -1,4 +1,4 @@
-package com.insightfullogic.collections.performance;
+package com.iteratrlearning.collections.performance;
 /*
  * Copyright 2014 Real Logic Ltd.
  *
