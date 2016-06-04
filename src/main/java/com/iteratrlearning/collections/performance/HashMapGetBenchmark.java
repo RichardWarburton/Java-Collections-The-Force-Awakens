@@ -21,7 +21,7 @@ public class HashMapGetBenchmark
     @Param({"10000"})
     int size;
 
-    @Param({/*"0.1"*/, "0.5", /*"0.9"*/})
+    @Param({/*"0.1",*/"0.5"/*, "0.9"*/})
     double collisionProb;
 
     @Param({"JdkMap"/*, "Koloboke"*/ })
