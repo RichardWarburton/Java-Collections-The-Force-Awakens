@@ -24,7 +24,7 @@ public class HashMapGetBenchmark
     @Param({/*"0.1", "0.5",*/ "0.9"})
     double collisionProb;
 
-    @Param({"JdkMap", "Koloboke" })
+    @Param({/*"JdkMap",*/ "Koloboke" })
     String mapType;
 
     //@Param({"Comparable", "InComparable"})
@@ -95,11 +95,11 @@ public class HashMapGetBenchmark
     }
 
     // Baseline to be able to remove overhead of nextKey() operation
-    @Benchmark
+    /*@Benchmark
     public Object baseline()
     {
         return nextSuccessfulKey();
-    }
+    }*/
 
     @Benchmark
     public String getSuccess()
@@ -108,12 +108,12 @@ public class HashMapGetBenchmark
         return map.get(key);
     }
 
-    @Benchmark
+    /*@Benchmark
     public String getFail()
     {
         final Object key = nextFailKey();
         return map.get(key);
-    }
+    }*/
 
     private Object nextSuccessfulKey()
     {
