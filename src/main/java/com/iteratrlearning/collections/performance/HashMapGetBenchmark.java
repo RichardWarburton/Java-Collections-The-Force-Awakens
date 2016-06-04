@@ -10,7 +10,7 @@ import static org.openjdk.jmh.annotations.Mode.AverageTime;
 
 @Fork(1)
 @Warmup(iterations = 3)
-@Measurement(iterations = 5)
+@Measurement(iterations = 3)
 @State(Scope.Thread)
 @BenchmarkMode(AverageTime)
 @OutputTimeUnit(NANOSECONDS)
@@ -18,15 +18,17 @@ public class HashMapGetBenchmark
 {
 
     @Param({"10", "10000", "1000000"})
+    //@Param({"1000"})
     int size;
 
-    @Param({"0.1", "0.5", "0.9"})
+    @Param({"0.1", /*"0.5", "0.9"*/})
     double collisionProb;
 
     @Param({"JdkMap", "Koloboke" })
     String mapType;
 
-    @Param({"Comparable", "InComparable"})
+    //@Param({"Comparable", "InComparable"})
+    @Param({"Comparable"})
     String keyType;
 
     Map<Object, String> map;
