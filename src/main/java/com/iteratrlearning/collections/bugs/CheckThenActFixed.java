@@ -21,7 +21,7 @@ public class CheckThenActFixed {
 
         executorService.shutdown();
         try {
-            executorService.awaitTermination(1, TimeUnit.SECONDS);
+            while(!executorService.awaitTermination(1, TimeUnit.SECONDS));
             System.out.println(movieViews);
         } catch (InterruptedException e) {
             e.printStackTrace();
