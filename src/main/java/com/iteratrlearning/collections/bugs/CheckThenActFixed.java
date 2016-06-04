@@ -46,7 +46,7 @@ public class CheckThenActFixed {
     }
 
     private static void addOneViewJava8(Map<String, BigDecimal> movieViews) {
-        movieViews.computeIfPresent(MOVIE, (k, v) -> v.add(BigDecimal.ONE));
+        movieViews.computeIfPresent(MOVIE, (movie, views) -> views.add(BigDecimal.ONE));
     }
 }
 

@@ -2,8 +2,8 @@ package com.iteratrlearning.collections.cons;
 
 public class Cons<T> implements ConsList<T> {
 
-    final T head;
-    final ConsList<T> tail;
+    final private T head;
+    final private ConsList<T> tail;
 
     public Cons(T head, ConsList<T> tail) {
         this.head = head;
