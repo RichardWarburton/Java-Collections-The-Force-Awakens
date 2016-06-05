@@ -21,7 +21,7 @@ public class CheckThenActFixed {
 
         executorService.shutdown();
         try {
-            executorService.awaitTermination(1, TimeUnit.SECONDS);
+            while(!executorService.awaitTermination(1, TimeUnit.SECONDS));
             System.out.println(movieViews);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class CheckThenActFixed {
     }
 
     private static void addOneViewJava8(Map<String, BigDecimal> movieViews) {
-        movieViews.computeIfPresent(MOVIE, (k, v) -> v.add(BigDecimal.ONE));
+        movieViews.computeIfPresent(MOVIE, (movie, views) -> views.add(BigDecimal.ONE));
     }
 }
 
