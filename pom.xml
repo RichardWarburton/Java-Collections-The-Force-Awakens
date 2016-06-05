@@ -39,12 +39,12 @@
         </dependency>
         <dependency>
             <groupId>com.koloboke</groupId>
-            <artifactId>koloboke-api-jdk6-7</artifactId>
+            <artifactId>koloboke-api-jdk8</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.koloboke</groupId>
-            <artifactId>koloboke-impl-jdk6-7</artifactId>
+            <artifactId>koloboke-impl-jdk8</artifactId>
             <version>1.0.0</version>
             <scope>runtime</scope>
         </dependency>
@@ -78,7 +78,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmh.version>1.12</jmh.version>
-        <javac.target>1.7</javac.target>
+        <javac.target>1.8</javac.target>
         <uberjar.name>benchmarks</uberjar.name>
     </properties>
 
