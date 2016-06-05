@@ -17,14 +17,14 @@ import static org.openjdk.jmh.annotations.Mode.AverageTime;
 public class HashMapGetBenchmark
 {
 
-    @Param({"10", "10000", "1000000"})
+    @Param({"10", "10000", /*"1000000"*/})
     //@Param({"10000"})
     int size;
 
-    @Param({/*"0.1", "0.5",*/ "0.9"})
+    @Param({/*"0.1", "0.5",*/ "1.0"})
     double collisionProb;
 
-    @Param({/*"JdkMap",*/ "Koloboke" })
+    @Param({"JdkMap", "Koloboke" })
     String mapType;
 
     //@Param({"Comparable", "InComparable"})
