@@ -21,6 +21,7 @@ public class HashMapGetBenchmark
     //@Param({"10000"})
     int size;
 
+    // Actually means the inverse of the collision probability
     @Param({/*"0.1", "0.5",*/ "1.0"})
     double collisionProb;
 
@@ -47,6 +48,7 @@ public class HashMapGetBenchmark
         final KeyFactory keyFactory = KeyFactory.valueOf(keyType);
 
         map = mapFactory.make();
+        System.out.println(map.getClass());
         failKeys = new Object[size];
         successfulKeys = new Object[size];
 
@@ -55,9 +57,15 @@ public class HashMapGetBenchmark
         final Random random = new Random(666);
         final int numberOfHashes = (int) (size * collisionProb);
         final int[] hashes = new int[numberOfHashes];
-        for (int i = 0; i < numberOfHashes; i++)
+        final Set<Integer> collisions = new HashSet<>();
+        for (int i = 0; i < numberOfHashes;)
         {
-            hashes[i] = random.nextInt(size);
+            final int value = random.nextInt(size);
+            if (collisions.add(value))
+            {
+                hashes[i] = value;
+                i++;
+            }
         }
 
         // Setup keys and values
